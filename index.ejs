@@ -1,0 +1,45 @@
+<HTML>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>YandexSHRI-1</title>
+		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+		<link rel="stylesheet" href="/stories.css">
+	</head>
+	<body class="theme_<%= theme %>">
+		<div id="root">
+			
+		</div>
+		<script src="/React/react.development.js" crossorigin></script>
+		<script src="/React/react-dom.development.js" crossorigin></script>
+		<script type="text/javascript" src="/stories.js"></script>
+		<script type="text/javascript">
+
+			async function getJSON() { // Функция парсит данные с файла data.json
+				return fetch('/data.json')
+				.then((res)=>res.json())
+				.then((json)=>{return json});
+			}
+			
+			function data (data) { // Функция интерпретирует JSON объект в удобный для вывода формат данных.
+				return Object.entries(data).map((number) => {
+					if (number[1] == "[object Object]")
+						Object.entries(number[1]).map((number) => {
+							if (number[1] == "[object Object]" || number[1][0] == "[object Object]")
+								return Object.entries(number[1]).map(number => Object.entries(number[1]).map(number=>number[1]))
+							return number[1]
+						})
+					return number[1]
+				});
+			}
+
+			async function render () { // Функция выводит данные шаблона, после выполнения функции getJSON()
+			    const json = await getJSON();
+			    window.renderTemplate(json[`<%= data %>`].alias, json[`<%= data %>`].data);
+			}
+
+			render();
+
+		</script>
+	</body>
+</HTML>
